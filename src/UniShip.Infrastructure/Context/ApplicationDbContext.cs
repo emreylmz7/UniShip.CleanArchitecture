@@ -38,9 +38,9 @@ internal sealed class ApplicationDbContext : IdentityDbContext<AppUser, Identity
     {
         var entries = ChangeTracker.Entries<Entity>();
 
-        HttpContextAccessor httpContextAccessor = new();
-        string userIdString = httpContextAccessor.HttpContext!.User.Claims.First(p => p.Type == "user-id").Value;
-        Guid userId = Guid.Parse(userIdString);
+        //HttpContextAccessor httpContextAccessor = new();
+        //string userIdString = httpContextAccessor.HttpContext!.User.Claims.First(p => p.Type == "user-id").Value;
+        //Guid userId = Guid.Parse(userIdString);
 
         foreach (var entry in entries)
         {
@@ -48,8 +48,8 @@ internal sealed class ApplicationDbContext : IdentityDbContext<AppUser, Identity
             {
                 entry.Property(p => p.CreatedDate)
                     .CurrentValue = DateTime.Now;
-                entry.Property(p => p.CreatedBy)
-                    .CurrentValue = userId;
+                //entry.Property(p => p.CreatedBy)
+                //    .CurrentValue = userId;
             }
 
             if (entry.State == EntityState.Modified)
@@ -64,8 +64,8 @@ internal sealed class ApplicationDbContext : IdentityDbContext<AppUser, Identity
                     entry.Property(p => p.LastModifiedDate)
                     .CurrentValue = DateTime.Now;
 
-                    entry.Property(p => p.LastModifiedBy)
-                    .CurrentValue = userId;
+                    //entry.Property(p => p.LastModifiedBy)
+                    //.CurrentValue = userId;
                 }
             }
 

@@ -23,8 +23,8 @@ internal sealed class GetListBranchQueryHandler(
     public Task<IQueryable<GetListBranchQueryResponse>> Handle(GetListBranchQuery request, CancellationToken cancellationToken)
     {
         var response = (from branch in branchRepository.GetAll()
-                        .Include(b => b.Staff!.Select(s => new { s.FirstName, s.LastName }))
-                        .Include(b => b.Vehicles!.Select(v => new { v.PlateNumber }))
+                        .Include(b => b.Vehicles)
+                        .Include(b => b.Staff)
                         select new GetListBranchQueryResponse
                         {
                             Id = branch.Id,

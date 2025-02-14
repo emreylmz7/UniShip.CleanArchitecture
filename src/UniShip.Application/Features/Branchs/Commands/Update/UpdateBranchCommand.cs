@@ -5,6 +5,7 @@ using UniShip.Domain.Branchs;
 
 namespace UniShip.Application.Features.Branchs.Commands.Update;
 public sealed record class UpdateBranchCommand(
+    Guid Id,
     string Email,
     string Name,
     string Address,
