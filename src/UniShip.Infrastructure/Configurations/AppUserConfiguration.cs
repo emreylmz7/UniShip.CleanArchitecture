@@ -7,7 +7,8 @@ internal sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
 {
     public void Configure(EntityTypeBuilder<AppUser> builder)
     {
-        // Configure properties
+        builder.HasKey(u => u.Id);
+
         builder.Property(u => u.FirstName)
                .HasColumnType("varchar(50)")
                .IsRequired();
@@ -24,7 +25,13 @@ internal sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
                .HasColumnType("varchar(50)")
                .IsRequired();
 
+        builder.HasOne(u => u.Branch)
+               .WithMany(b => b.Staff)
+               .HasForeignKey(u => u.BranchId)
+               .OnDelete(DeleteBehavior.Restrict);
+
         builder.HasIndex(u => u.UserName).IsUnique();
         builder.HasIndex(u => u.Email).IsUnique();
+
     }
 }

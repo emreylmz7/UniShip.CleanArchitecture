@@ -31,11 +31,13 @@ internal class BranchConfiguration : IEntityTypeConfiguration<Branch>
             .IsRequired();
 
         builder.HasMany(b => b.Staff)
-            .WithOne()
-            .OnDelete(DeleteBehavior.Cascade);
+           .WithOne(u => u.Branch)
+           .HasForeignKey(u => u.BranchId)
+           .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(b => b.Vehicles)
             .WithOne()
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasForeignKey("BranchId")
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -287,7 +287,7 @@ namespace UniShip.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("BranchId")
+                    b.Property<Guid>("BranchId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ConcurrencyStamp")
@@ -451,10 +451,13 @@ namespace UniShip.Infrastructure.Migrations
 
             modelBuilder.Entity("UniShip.Domain.Users.AppUser", b =>
                 {
-                    b.HasOne("UniShip.Domain.Branchs.Branch", null)
+                    b.HasOne("UniShip.Domain.Branchs.Branch", "Branch")
                         .WithMany("Staff")
                         .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
                 });
 
             modelBuilder.Entity("UniShip.Domain.Vehicles.Vehicle", b =>

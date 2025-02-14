@@ -8,19 +8,26 @@ using Scrutor;
 using UniShip.Domain.Users;
 using UniShip.Infrastructure.Context;
 using UniShip.Infrastructure.Options;
+using UniShip.Infrastructure.Seeds.Interfaces;
+using UniShip.Infrastructure.Seeds;
 
 namespace UniShip.Infrastructure;
 public static class InfrastructureRegistrar
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        // 1️ Veritabanı bağlantısını ekleyin
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("SqlServer")));
 
+
+        // 2️ UnitOfWork ve Seed işlemlerini tanımlayın
         services.AddScoped<IUnitOfWork>(srv => srv.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<IDataSeeder, BranchSeedData>();
+        services.AddScoped<IDataSeeder, UserSeedData>();
+        services.AddScoped<DataSeeder>();
 
-
-        // Identity servislerini ekliyoruz. Bu Usermanager in DI 'ı için gerekli.UserManager kullanmıcaksak gerek yok buna.
+        // 3️ Identity yapılandırmasını ekleyin
         services
             .AddIdentity<AppUser, IdentityRole<Guid>>(opt =>
             {
@@ -36,21 +43,9 @@ public static class InfrastructureRegistrar
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+        // 4️ JWT konfigürasyonu
         services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
         services.ConfigureOptions<JwtOptionsSetup>();
-
-        // Scrutor kütüphanesini kullanarak bağımlılık enjeksiyonu için otomatik tarama yapıyoruz.
-        services.Scan(opt => opt
-            // Bu assembly (CleanArchitecture.Infrastructure) içindeki tüm sınıfları tarıyoruz.
-            .FromAssemblies(typeof(InfrastructureRegistrar).Assembly)
-            // Sadece public olmayan (internal veya private) sınıfları dahil ediyoruz.
-            .AddClasses(publicOnly: false)
-            // Aynı arayüze sahip birden fazla sınıf varsa, önce kayıtlı olanı koruyoruz (Skip stratejisi).
-            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
-            // Bulunan sınıfları, uyguladıkları arayüzler üzerinden kaydediyoruz.
-            .AsImplementedInterfaces()
-            // Kayıt edilen sınıfların yaşam süresini Scoped (istek bazlı) olarak belirliyoruz.
-            .WithScopedLifetime());
 
         services.AddAuthentication(options =>
         {
@@ -60,7 +55,21 @@ public static class InfrastructureRegistrar
 
         services.AddAuthorization();
 
+        // 5️ Scrutor ile bağımlılık enjeksiyonunu en son tarayın
+        services.Scan(opt => opt
+            .FromAssemblies(typeof(InfrastructureRegistrar).Assembly)
+            .AddClasses(publicOnly: false)
+            .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
 
         return services;
+    }
+
+    public static async Task SeedDatabaseAsync(this IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+        await seeder.SeedAsync();
     }
 }

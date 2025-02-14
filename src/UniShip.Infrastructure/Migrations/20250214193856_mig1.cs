@@ -78,14 +78,14 @@ namespace UniShip.Infrastructure.Migrations
                     FirstName = table.Column<string>(type: "varchar(50)", nullable: false),
                     LastName = table.Column<string>(type: "varchar(50)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LastModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UserName = table.Column<string>(type: "varchar(15)", nullable: false),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "varchar(50)", nullable: false),
@@ -109,7 +109,7 @@ namespace UniShip.Infrastructure.Migrations
                         column: x => x.BranchId,
                         principalTable: "Branches",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(

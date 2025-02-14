@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using UniShip.Domain.Branchs;
 using UniShip.Domain.Shipments;
 
 namespace UniShip.Domain.Users;
@@ -12,6 +13,8 @@ public class AppUser : IdentityUser<Guid>
     public string LastName { get; set; } = default!;
     public string FullName => $"{FirstName} {LastName}";
     public string Address { get; set; } = default!;
+    public Guid BranchId { get; set; } = default!;
+    public virtual Branch Branch { get; set; } = default!;
     public virtual ICollection<Shipment>? Shipments { get; set; }
 
 

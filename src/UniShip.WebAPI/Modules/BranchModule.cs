@@ -41,7 +41,7 @@ public static class BranchModule
                 var response = await sender.Send(new GetByIdBranchQuery(id), cancellationToken);
                 return response.IsSuccessful ? Results.Ok(response) : Results.NotFound(response);
             })
-            .Produces<Result<Branch>>()
+            .Produces<Result<GetByIdBranchQueryResponse>>()
             .WithName("GetBranchById");
 
         // Şube Güncelleme (PUT /{id})
