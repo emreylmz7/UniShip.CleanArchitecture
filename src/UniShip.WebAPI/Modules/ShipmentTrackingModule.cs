@@ -41,7 +41,7 @@ public static class ShipmentTrackingModule
                 var response = await sender.Send(new GetByIdShipmentTrackingQuery(id), cancellationToken);
                 return response.IsSuccessful ? Results.Ok(response) : Results.NotFound(response);
             })
-            .Produces<Result<ShipmentTracking>>()
+            .Produces<Result<GetByIdShipmentTrackingQueryResponse>>()
             .WithName("GetShipmentTrackingById");
 
         // Kargo Takibini Güncelleme (PUT /{id})

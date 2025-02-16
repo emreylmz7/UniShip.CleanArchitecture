@@ -2,7 +2,7 @@
 using UniShip.Infrastructure;
 using UniShip.WebAPI.Modules;
 
-namespace UniShip.WebAPI.Middlewares;
+namespace UniShip.WebAPI.Extensions;
 
 public static class ApplicationBuilderExtensions
 {

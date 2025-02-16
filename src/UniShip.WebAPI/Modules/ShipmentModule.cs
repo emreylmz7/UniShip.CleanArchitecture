@@ -41,7 +41,7 @@ public static class ShipmentModule
                 var response = await sender.Send(new GetByIdShipmentQuery(id), cancellationToken);
                 return response.IsSuccessful ? Results.Ok(response) : Results.NotFound(response);
             })
-            .Produces<Result<Shipment>>()
+            .Produces<Result<GetByIdShipmentQueryResponse>>()
             .WithName("GetShipmentById");
 
         // Kargo Güncelleme (PUT /{id})

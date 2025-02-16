@@ -41,7 +41,7 @@ public static class CustomerModule
                 var response = await sender.Send(new GetByIdCustomerQuery(id), cancellationToken);
                 return response.IsSuccessful ? Results.Ok(response) : Results.NotFound(response);
             })
-            .Produces<Result<Customer>>()
+            .Produces<Result<GetByIdCustomerQueryResponse>>()
             .WithName("GetCustomerById");
 
         // Müşteri Güncelleme (PUT /{id})

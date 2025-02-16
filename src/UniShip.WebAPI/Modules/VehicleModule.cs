@@ -41,7 +41,7 @@ public static class VehicleModule
                 var response = await sender.Send(new GetByIdVehicleQuery(id), cancellationToken);
                 return response.IsSuccessful ? Results.Ok(response) : Results.NotFound(response);
             })
-            .Produces<Result<Vehicle>>()
+            .Produces<Result<GetByIdVehicleQueryResponse>>()
             .WithName("GetVehicleById");
 
         // Araç Güncelleme (PUT /{id})

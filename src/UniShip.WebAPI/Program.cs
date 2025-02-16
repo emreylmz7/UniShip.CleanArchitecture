@@ -3,6 +3,7 @@ using Scalar.AspNetCore;
 using System.Threading.RateLimiting;
 using UniShip.Application;
 using UniShip.Infrastructure;
+using UniShip.WebAPI.Extensions;
 using UniShip.WebAPI.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
