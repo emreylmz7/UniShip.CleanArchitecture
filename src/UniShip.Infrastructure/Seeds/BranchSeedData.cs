@@ -7,12 +7,13 @@ using UniShip.Infrastructure.Seeds.Interfaces;
 namespace UniShip.Infrastructure.Seeds;
 public class BranchSeedData : BaseSeedData, IDataSeeder
 {
-    public int Order => 1; 
+    public int Order => 2; 
 
     public BranchSeedData(
         ApplicationDbContext context,
-        UserManager<AppUser> userManager)
-        : base(context, userManager)
+        UserManager<AppUser> userManager,
+        RoleManager<IdentityRole<Guid>> roleManager)
+        : base(context, userManager, roleManager)
     {
     }
 

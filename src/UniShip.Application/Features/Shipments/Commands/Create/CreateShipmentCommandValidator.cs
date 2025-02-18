@@ -12,6 +12,9 @@ public sealed class ShipmentCreateCommandValidator : AbstractValidator<CreateShi
         RuleFor(x => x.SenderId)
             .NotEmpty().WithMessage("Sender ID is required.");
 
+        RuleFor(x => x.BranchId)
+            .NotEmpty().WithMessage("Branch ID is required.");
+
         RuleFor(x => x.Weight)
             .GreaterThan(0).WithMessage("Weight must be greater than 0.");
 
@@ -36,5 +39,13 @@ public sealed class ShipmentCreateCommandValidator : AbstractValidator<CreateShi
         RuleFor(x => x.ReceiverPhone)
             .NotEmpty().WithMessage("Receiver phone is required.")
             .MaximumLength(20).WithMessage("Receiver phone cannot exceed 20 characters.");
+
+        RuleFor(x => x.AssignedVehicleId)
+            .Must((id) => id == null || id != Guid.Empty)
+            .WithMessage("Assigned vehicle ID must be null or a valid GUID.");
+
+        RuleFor(x => x.AssignedCourierId)
+            .Must((id) => id == null || id != Guid.Empty)
+            .WithMessage("Assigned courier ID must be null or a valid GUID.");
     }
 } 

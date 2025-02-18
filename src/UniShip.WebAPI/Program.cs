@@ -8,7 +8,7 @@ using UniShip.WebAPI.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1? Servisleri ekleyelim
+// 1 Servisleri ekleyelim
 builder.Services.AddResponseCompression(options =>
 {
     options.EnableForHttps = true;
@@ -22,7 +22,7 @@ builder.Services.AddCors();
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
-// 2? Rate Limiting ayarlarý
+// 2 Rate Limiting ayarlarý
 builder.Services.AddRateLimiter(x =>
     x.AddFixedWindowLimiter("fixed", cfg =>
     {
@@ -37,7 +37,7 @@ builder.Services.AddExceptionHandler<ExceptionHandler>().AddProblemDetails();
 
 var app = builder.Build();
 
-// ? Tek satýrda tüm middleware'leri ve seed iþlemini çaðýrýyoruz
+// Tek satýrda tüm middleware'leri ve seed iþlemini çaðýrýyoruz
 await app.ConfigureApplicationAsync();
 
 app.Run();

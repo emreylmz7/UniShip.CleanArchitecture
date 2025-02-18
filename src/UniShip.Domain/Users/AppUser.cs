@@ -14,6 +14,7 @@ public class AppUser : IdentityUser<Guid>
     public string FullName => $"{FirstName} {LastName}";
     public string Address { get; set; } = default!;
     public Guid BranchId { get; set; } = default!;
+    public UserRole Role { get; set; }
     public virtual Branch Branch { get; set; } = default!;
     public virtual ICollection<Shipment>? Shipments { get; set; }
 

@@ -12,7 +12,15 @@ using UniShip.Domain.ShipmentTrackings;
 using UniShip.Domain.Vehicles;
 
 namespace UniShip.Infrastructure.Context;
-public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>, IUnitOfWork
+public class ApplicationDbContext : IdentityDbContext<
+        AppUser,
+        IdentityRole<Guid>,
+        Guid,
+        IdentityUserClaim<Guid>,
+        IdentityUserRole<Guid>,
+        IdentityUserLogin<Guid>,
+        IdentityRoleClaim<Guid>,
+        IdentityUserToken<Guid>>
 {
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {
@@ -32,9 +40,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<Guid
         modelBuilder.Ignore<IdentityRoleClaim<Guid>>();
         modelBuilder.Ignore<IdentityUserToken<Guid>>();
         modelBuilder.Ignore<IdentityUserLogin<Guid>>();
-        modelBuilder.Ignore<IdentityUserRole<Guid>>();
     }
-
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

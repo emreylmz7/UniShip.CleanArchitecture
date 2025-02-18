@@ -12,8 +12,8 @@ using UniShip.Infrastructure.Context;
 namespace UniShip.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250214193856_mig1")]
-    partial class mig1
+    [Migration("20250218160837_mig2")]
+    partial class mig2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,25 @@ namespace UniShip.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IdentityRole");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
@@ -43,6 +62,23 @@ namespace UniShip.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("UserId");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("RoleId");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("UserRoles", (string)null);
                 });
 
             modelBuilder.Entity("UniShip.Domain.Branchs.Branch", b =>
@@ -211,6 +247,15 @@ namespace UniShip.Infrastructure.Migrations
                     b.Property<Guid?>("AppUserId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("AssignedCourierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AssignedVehicleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -272,6 +317,12 @@ namespace UniShip.Infrastructure.Migrations
 
                     b.HasIndex("AppUserId");
 
+                    b.HasIndex("AssignedCourierId");
+
+                    b.HasIndex("AssignedVehicleId");
+
+                    b.HasIndex("BranchId");
+
                     b.HasIndex("SenderId");
 
                     b.ToTable("Shipments", (string)null);
@@ -288,7 +339,7 @@ namespace UniShip.Infrastructure.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varchar(250)");
 
                     b.Property<Guid>("BranchId")
                         .HasColumnType("uniqueidentifier");
@@ -317,10 +368,14 @@ namespace UniShip.Infrastructure.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<Guid?>("LastModifiedBy")
                         .HasColumnType("uniqueidentifier");
@@ -352,6 +407,9 @@ namespace UniShip.Infrastructure.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
@@ -426,6 +484,21 @@ namespace UniShip.Infrastructure.Migrations
                     b.ToTable("Vehicles", (string)null);
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("UniShip.Domain.Users.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("UniShip.Domain.ShipmentTrackings.ShipmentTracking", b =>
                 {
                     b.HasOne("UniShip.Domain.Shipments.Shipment", "Shipment")
@@ -443,11 +516,33 @@ namespace UniShip.Infrastructure.Migrations
                         .WithMany("Shipments")
                         .HasForeignKey("AppUserId");
 
+                    b.HasOne("UniShip.Domain.Users.AppUser", "AssignedCourier")
+                        .WithMany()
+                        .HasForeignKey("AssignedCourierId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("UniShip.Domain.Vehicles.Vehicle", "AssignedVehicle")
+                        .WithMany()
+                        .HasForeignKey("AssignedVehicleId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("UniShip.Domain.Branchs.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("UniShip.Domain.Customers.Customer", "Sender")
                         .WithMany("Shipments")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("AssignedCourier");
+
+                    b.Navigation("AssignedVehicle");
+
+                    b.Navigation("Branch");
 
                     b.Navigation("Sender");
                 });

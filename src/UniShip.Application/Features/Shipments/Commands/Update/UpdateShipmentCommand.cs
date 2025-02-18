@@ -6,6 +6,9 @@ using UniShip.Domain.Shipments;
 namespace UniShip.Application.Features.Shipments.Commands.Update;
 public sealed record class UpdateShipmentCommand(
     Guid Id,
+    Guid BranchId,
+    Guid? AssignedVehicleId,
+    Guid? AssignedCourierId,
     DateTime? DeliveryDate,
     decimal Weight,
     decimal Price,
@@ -27,6 +30,9 @@ internal sealed class ShipmentUpdateCommandHandler(IShipmentRepository ShipmentR
             return Result<string>.Failure("Shipment not found.");
         }
 
+        shipment.BranchId = request.BranchId;
+        shipment.AssignedVehicleId = request.AssignedVehicleId;
+        shipment.AssignedCourierId = request.AssignedCourierId;
         shipment.DeliveryDate = request.DeliveryDate;
         shipment.Weight = request.Weight;
         shipment.Price = request.Price;

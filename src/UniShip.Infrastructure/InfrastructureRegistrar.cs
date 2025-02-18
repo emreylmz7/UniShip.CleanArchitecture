@@ -12,22 +12,23 @@ using UniShip.Infrastructure.Seeds.Interfaces;
 using UniShip.Infrastructure.Seeds;
 
 namespace UniShip.Infrastructure;
+
 public static class InfrastructureRegistrar
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // 1️ Veritabanı bağlantısını ekleyin
+        // 1️ Veritabanı bağlantısı
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("SqlServer")));
 
-
-        // 2️ UnitOfWork ve Seed işlemlerini tanımlayın
-        services.AddScoped<IUnitOfWork>(srv => srv.GetRequiredService<ApplicationDbContext>());
+        // 2️ UnitOfWork ve Seed işlemleri
+        services.AddScoped<IUnitOfWork>(srv => (IUnitOfWork)srv.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IDataSeeder, BranchSeedData>();
         services.AddScoped<IDataSeeder, UserSeedData>();
+        services.AddScoped<IDataSeeder, RoleSeedData>();
         services.AddScoped<DataSeeder>();
 
-        // 3️ Identity yapılandırmasını ekleyin
+        // 3️ Identity yapılandırması - Guid tipinde
         services
             .AddIdentity<AppUser, IdentityRole<Guid>>(opt =>
             {
@@ -40,13 +41,14 @@ public static class InfrastructureRegistrar
                 opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 opt.SignIn.RequireConfirmedEmail = false;
             })
+            .AddRoles<IdentityRole<Guid>>()
+            .AddRoleManager<RoleManager<IdentityRole<Guid>>>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
+            .AddDefaultTokenProviders(); 
 
         // 4️ JWT konfigürasyonu
         services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
         services.ConfigureOptions<JwtOptionsSetup>();
-
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -55,7 +57,7 @@ public static class InfrastructureRegistrar
 
         services.AddAuthorization();
 
-        // 5️ Scrutor ile bağımlılık enjeksiyonunu en son tarayın
+        // 5️ Scrutor ile bağımlılık enjeksiyonu
         services.Scan(opt => opt
             .FromAssemblies(typeof(InfrastructureRegistrar).Assembly)
             .AddClasses(publicOnly: false)

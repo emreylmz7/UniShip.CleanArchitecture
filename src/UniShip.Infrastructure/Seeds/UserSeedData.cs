@@ -12,12 +12,13 @@ using UniShip.Infrastructure.Seeds.Interfaces;
 namespace UniShip.Infrastructure.Seeds;
 public class UserSeedData : BaseSeedData, IDataSeeder
 {
-    public int Order => 2;
+    public int Order => 3;
 
     public UserSeedData(
         ApplicationDbContext context,
-        UserManager<AppUser> userManager)
-        : base(context, userManager)
+        UserManager<AppUser> userManager,
+        RoleManager<IdentityRole<Guid>> roleManager)
+        : base(context, userManager, roleManager)
     {
     }
 
@@ -37,12 +38,15 @@ public class UserSeedData : BaseSeedData, IDataSeeder
                 CreatedDate = DateTime.Now,
                 Address = "Antalya",
                 BranchId = branch!.Id,
+                Role = UserRole.Admin
             };
 
             var result = await _userManager.CreateAsync(user, "1");
 
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, "Admin");
+
                 branch.CreatedBy = user.Id;
                 user.CreatedBy = user.Id;
 

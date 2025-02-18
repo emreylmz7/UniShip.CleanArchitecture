@@ -13,6 +13,12 @@ public sealed class GetByIdShipmentQueryResponse
     public string TrackingNumber { get; set; } = default!;
     public Guid SenderId { get; set; }
     public string SenderName { get; set; } = default!;
+    public Guid BranchId { get; set; }
+    public string BranchName { get; set; } = default!;
+    public Guid? AssignedVehicleId { get; set; }
+    public string? AssignedVehiclePlate { get; set; }
+    public Guid? AssignedCourierId { get; set; }
+    public string? AssignedCourierName { get; set; }
     public DateTime? DeliveryDate { get; set; }
     public decimal Weight { get; set; }
     public decimal Price { get; set; }
@@ -30,12 +36,21 @@ internal sealed class GetByIdShipmentQueryHandler(IShipmentRepository ShipmentRe
     {
         var shipment = await ShipmentRepository.GetAll()
             .Include(s => s.Sender)
+            .Include(s => s.Branch)
+            .Include(s => s.AssignedVehicle)
+            .Include(s => s.AssignedCourier)
             .Select(s => new GetByIdShipmentQueryResponse
             {
                 Id = s.Id,
                 TrackingNumber = s.TrackingNumber,
                 SenderId = s.SenderId,
                 SenderName = s.Sender.FirstName + " " + s.Sender.LastName,
+                BranchId = s.BranchId,
+                BranchName = s.Branch.Name,
+                AssignedVehicleId = s.AssignedVehicleId,
+                AssignedVehiclePlate = s.AssignedVehicle != null ? s.AssignedVehicle.PlateNumber : null,
+                AssignedCourierId = s.AssignedCourierId,
+                AssignedCourierName = s.AssignedCourier != null ? s.AssignedCourier.FirstName + " " + s.AssignedCourier.LastName : null,
                 DeliveryDate = s.DeliveryDate,
                 Weight = s.Weight,
                 Price = s.Price,

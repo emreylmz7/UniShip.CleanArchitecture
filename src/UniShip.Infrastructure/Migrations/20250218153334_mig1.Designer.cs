@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UniShip.Infrastructure.Context;
 
@@ -11,9 +12,11 @@ using UniShip.Infrastructure.Context;
 namespace UniShip.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250218153334_mig1")]
+    partial class mig1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,15 +247,6 @@ namespace UniShip.Infrastructure.Migrations
                     b.Property<Guid?>("AppUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AssignedCourierId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AssignedVehicleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
@@ -314,12 +308,6 @@ namespace UniShip.Infrastructure.Migrations
 
                     b.HasIndex("AppUserId");
 
-                    b.HasIndex("AssignedCourierId");
-
-                    b.HasIndex("AssignedVehicleId");
-
-                    b.HasIndex("BranchId");
-
                     b.HasIndex("SenderId");
 
                     b.ToTable("Shipments", (string)null);
@@ -336,7 +324,7 @@ namespace UniShip.Infrastructure.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("varchar(250)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("BranchId")
                         .HasColumnType("uniqueidentifier");
@@ -365,14 +353,10 @@ namespace UniShip.Infrastructure.Migrations
                         .HasColumnType("varchar(50)");
 
                     b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
+                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
+                        .HasColumnType("bit");
 
                     b.Property<Guid?>("LastModifiedBy")
                         .HasColumnType("uniqueidentifier");
@@ -513,33 +497,11 @@ namespace UniShip.Infrastructure.Migrations
                         .WithMany("Shipments")
                         .HasForeignKey("AppUserId");
 
-                    b.HasOne("UniShip.Domain.Users.AppUser", "AssignedCourier")
-                        .WithMany()
-                        .HasForeignKey("AssignedCourierId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("UniShip.Domain.Vehicles.Vehicle", "AssignedVehicle")
-                        .WithMany()
-                        .HasForeignKey("AssignedVehicleId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("UniShip.Domain.Branchs.Branch", "Branch")
-                        .WithMany()
-                        .HasForeignKey("BranchId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("UniShip.Domain.Customers.Customer", "Sender")
                         .WithMany("Shipments")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("AssignedCourier");
-
-                    b.Navigation("AssignedVehicle");
-
-                    b.Navigation("Branch");
 
                     b.Navigation("Sender");
                 });

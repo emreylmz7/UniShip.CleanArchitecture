@@ -8,6 +8,9 @@ namespace UniShip.Application.Features.Shipments.Commands.Create;
 public sealed record class CreateShipmentCommand(
     string TrackingNumber,
     Guid SenderId,
+    Guid BranchId,
+    Guid? AssignedVehicleId,
+    Guid? AssignedCourierId,
     DateTime? DeliveryDate,
     decimal Weight,
     decimal Price,

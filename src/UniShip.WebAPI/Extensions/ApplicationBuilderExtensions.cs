@@ -12,7 +12,7 @@ public static class ApplicationBuilderExtensions
         await app.Services.SeedDatabaseAsync();
 
         // 2️ Middleware'leri ekleyelim
-        app.UseHttpsRedirection(); // 🔹 HTTPS yönlendirmesi en başta olmalı
+        app.UseHttpsRedirection(); // HTTPS yönlendirmesi en başta olmalı
         app.UseResponseCompression();
         app.UseExceptionHandler();
 

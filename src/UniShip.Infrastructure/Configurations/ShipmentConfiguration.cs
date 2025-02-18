@@ -18,6 +18,13 @@ internal class ShipmentConfiguration : IEntityTypeConfiguration<Shipment>
         builder.Property(s => s.SenderId)
             .IsRequired();
 
+        builder.Property(s => s.BranchId)
+            .IsRequired();
+
+        builder.Property(s => s.AssignedVehicleId);
+
+        builder.Property(s => s.AssignedCourierId);
+
         builder.Property(s => s.DeliveryDate);
 
         builder.Property(s => s.Weight)
@@ -50,6 +57,21 @@ internal class ShipmentConfiguration : IEntityTypeConfiguration<Shipment>
             .WithMany(c => c.Shipments)
             .HasForeignKey(s => s.SenderId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(s => s.Branch)
+            .WithMany()
+            .HasForeignKey(s => s.BranchId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(s => s.AssignedVehicle)
+            .WithMany()
+            .HasForeignKey(s => s.AssignedVehicleId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasOne(s => s.AssignedCourier)
+            .WithMany()
+            .HasForeignKey(s => s.AssignedCourierId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasMany(s => s.TrackingHistory)
             .WithOne()
