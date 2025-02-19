@@ -20,7 +20,7 @@ public class ApplicationDbContext : IdentityDbContext<
         IdentityUserRole<Guid>,
         IdentityUserLogin<Guid>,
         IdentityRoleClaim<Guid>,
-        IdentityUserToken<Guid>>
+        IdentityUserToken<Guid>> , IUnitOfWork
 {
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {

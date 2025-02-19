@@ -22,7 +22,7 @@ public static class InfrastructureRegistrar
             options.UseSqlServer(configuration.GetConnectionString("SqlServer")));
 
         // 2️ UnitOfWork ve Seed işlemleri
-        services.AddScoped<IUnitOfWork>(srv => (IUnitOfWork)srv.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<IUnitOfWork>(srv => srv.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<IDataSeeder, BranchSeedData>();
         services.AddScoped<IDataSeeder, UserSeedData>();
         services.AddScoped<IDataSeeder, RoleSeedData>();
